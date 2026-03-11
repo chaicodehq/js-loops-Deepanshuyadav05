@@ -36,5 +36,54 @@
  *   rangoli(3) // => ["  *", " * *", "* * *", " * *", "  *"]
  */
 export function rangoli(n) {
-  // Your code here
+    // 1. Validation: Must be a positive integer
+    if (!Number.isInteger(n) || n <= 0) {
+        return [];
+    }
+
+    const result = [];
+
+    // Total rows in the diamond = 2n - 1
+    // For n=3, rows are 1, 2, 3, 2, 1
+
+    // 2. Generate Top Half (including the middle widest row)
+    for (let i = 1; i <= n; i++) {
+        let row = "";
+
+        // Add leading spaces: (n - i) spaces
+        for (let j = 0; j < n - i; j++) {
+            row += " ";
+        }
+
+        // Add stars with a single space: i stars
+        // We use a small trick: repeat the star+space and then trim the last space
+        let stars = "";
+        for (let k = 0; k < i; k++) {
+            stars += "* ";
+        }
+        row += stars.trim();
+
+        result.push(row);
+    }
+
+    // 3. Generate Bottom Half (mirror of the top, starting from n-1 down to 1)
+    for (let i = n - 1; i >= 1; i--) {
+        let row = "";
+
+        // Add leading spaces: (n - i) spaces
+        for (let j = 0; j < n - i; j++) {
+            row += " ";
+        }
+
+        // Add stars: i stars
+        let stars = "";
+        for (let k = 0; k < i; k++) {
+            stars += "* ";
+        }
+        row += stars.trim();
+
+        result.push(row);
+    }
+
+    return result;
 }

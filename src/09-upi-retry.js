@@ -35,5 +35,39 @@
  *   // => { attempts: 5, success: false, totalWaitTime: 15 }
  */
 export function upiRetry(outcomes) {
-  // Your code here
+    // 1. Validation: Array exists and is not empty
+    if (!Array.isArray(outcomes) || outcomes.length === 0) {
+        return { attempts: 0, success: false, totalWaitTime: 0 };
+    }
+
+    let attempts = 0;
+    let success = false;
+    let totalWaitTime = 0;
+    let currentWait = 1; // Starting wait time: 1s, 2s, 4s...
+
+    // 2. Retry Logic using do...while
+    do {
+        // Current attempt result (we use 'attempts' as index)
+        const currentResult = outcomes[attempts];
+        attempts++;
+
+        if (currentResult === "success") {
+            success = true;
+            break; // Stop immediately if successful
+        } else {
+            // If fail and we still have attempts left, add to total wait
+            // Max 5 attempts means we only wait after the 1st, 2nd, 3rd, and 4th fail.
+            if (attempts < 5 && attempts < outcomes.length) {
+                totalWaitTime += currentWait;
+                currentWait *= 2; // Exponential backoff: double the wait
+            }
+        }
+
+    } while (attempts < 5 && attempts < outcomes.length);
+
+    return {
+        attempts: attempts,
+        success: success,
+        totalWaitTime: totalWaitTime
+    };
 }

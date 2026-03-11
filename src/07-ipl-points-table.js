@@ -37,5 +37,72 @@
  *   // Sorted: CSK(3), RCB(1), MI(0)
  */
 export function iplPointsTable(matches) {
-  // Your code here
+    // 1. Validation: Array check
+    if (!Array.isArray(matches) || matches.length === 0) {
+        return [];
+    }
+
+    const teamsData = {};
+
+    // Helper function to initialize team if not present
+    const initTeam = (team) => {
+        if (!teamsData[team]) {
+            teamsData[team] = {
+                team: team,
+                played: 0,
+                won: 0,
+                lost: 0,
+                tied: 0,
+                noResult: 0,
+                points: 0
+            };
+        }
+    };
+
+    // 2. Loop through matches
+    for (const match of matches) {
+        const { team1, team2, result, winner } = match;
+
+        initTeam(team1);
+        initTeam(team2);
+
+        // Increment played count for both
+        teamsData[team1].played += 1;
+        teamsData[team2].played += 1;
+
+        if (result === "win") {
+            const loser = winner === team1 ? team2 : team1;
+
+            // Winner gets 2 points
+            teamsData[winner].won += 1;
+            teamsData[winner].points += 2;
+
+            // Loser gets 0
+            teamsData[loser].lost += 1;
+        }
+        else if (result === "tie") {
+            // Both get 1 point
+            teamsData[team1].tied += 1;
+            teamsData[team1].points += 1;
+            teamsData[team2].tied += 1;
+            teamsData[team2].points += 1;
+        }
+        else if (result === "no_result") {
+            // Both get 1 point
+            teamsData[team1].noResult += 1;
+            teamsData[team1].points += 1;
+            teamsData[team2].noResult += 1;
+            teamsData[team2].points += 1;
+        }
+    }
+
+    // 3. Convert object to array and Sort
+    return Object.values(teamsData).sort((a, b) => {
+        // Sort by points DESCENDING
+        if (b.points !== a.points) {
+            return b.points - a.points;
+        }
+        // If points equal, sort by team name ASCENDING
+        return a.team.localeCompare(b.team);
+    });
 }

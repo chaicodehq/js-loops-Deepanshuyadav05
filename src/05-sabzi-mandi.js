@@ -30,5 +30,45 @@
  *   // => { items: [], totalBill: 0 }
  */
 export function sabziMandiBill(shoppingList, priceList) {
-  // Your code here
+    const result = {
+        items: [],
+        totalBill: 0
+    };
+
+    // 1. Validation: Handle empty list or missing priceList
+    if (!Array.isArray(shoppingList) || !priceList || typeof priceList !== 'object') {
+        return result;
+    }
+
+    // 2. Loop through Amma's list using for...of
+    for (const item of shoppingList) {
+        const sabziName = item.name;
+        const sabziQty = item.qty;
+
+        // Rule (a): Check if the sabzi exists in priceList
+        // (We check for undefined or null to ensure the price is actually there)
+        const pricePerKg = priceList[sabziName];
+
+        if (pricePerKg === undefined) {
+            continue; // Mandi mein nahi hai, skip karo!
+        }
+
+        // Rule (b): "Bahut mehenga hai!" check
+        if (pricePerKg > 80) {
+            continue; // Amma rejected the price, move to next item
+        }
+
+        // If both rules pass, calculate cost and add to bill
+        const cost = pricePerKg * sabziQty;
+
+        result.items.push({
+            name: sabziName,
+            qty: sabziQty,
+            cost: cost
+        });
+
+        result.totalBill += cost;
+    }
+
+    return result;
 }

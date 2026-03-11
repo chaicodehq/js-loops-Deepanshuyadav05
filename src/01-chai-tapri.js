@@ -27,5 +27,29 @@
  *   // => { totalChai: 0, totalRevenue: 0 }
  */
 export function chaiTapriRevenue(customers) {
-  // Your code here
+    // 1. Validation: Must be a positive integer
+    // We check if it's a number, it's finite, an integer, and greater than 0
+    if (
+        typeof customers !== 'number' ||
+        !Number.isInteger(customers) ||
+        customers <= 0
+    ) {
+        return { totalChai: 0, totalRevenue: 0 };
+    }
+
+    // 2. Logic to find number of Adrak Chai (Every 3rd customer)
+    // Use Math.floor to get the count of full groups of 3
+    const adrakChaiCount = Math.floor(customers / 3);
+
+    // 3. Logic to find number of Cutting Chai
+    const cuttingChaiCount = customers - adrakChaiCount;
+
+    // 4. Revenue Calculation
+    // Adrak = Rs 15, Cutting = Rs 10
+    const totalRevenue = (adrakChaiCount * 15) + (cuttingChaiCount * 10);
+
+    return {
+        totalChai: customers,
+        totalRevenue: totalRevenue
+    };
 }

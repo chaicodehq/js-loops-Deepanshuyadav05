@@ -45,5 +45,76 @@
  *   // => [{ name: "Rahul", trainNumber: "12345", class: "sleeper", status: "confirmed" }]
  */
 export function railwayReservation(passengers, trains) {
-  // Your code here
+
+    // validation
+    if (!Array.isArray(passengers) || passengers.length === 0 ||
+        !Array.isArray(trains) || trains.length === 0) {
+        return [];
+    }
+
+    const results = [];
+
+    for (const passenger of passengers) {
+
+        let trainFound = null;
+
+        // find matching train
+        for (const train of trains) {
+            if (train.trainNumber === passenger.trainNumber) {
+                trainFound = train;
+                break;
+            }
+        }
+
+        // train not found
+        if (!trainFound) {
+            results.push({
+                name: passenger.name,
+                trainNumber: passenger.trainNumber,
+                class: null,
+                status: "train_not_found"
+            });
+            continue;
+        }
+
+        const seats = trainFound.seats;
+
+        // try preferred class
+        if (seats[passenger.preferred] > 0) {
+            seats[passenger.preferred]--;
+
+            results.push({
+                name: passenger.name,
+                trainNumber: passenger.trainNumber,
+                class: passenger.preferred,
+                status: "confirmed"
+            });
+
+            continue;
+        }
+
+        // try fallback class
+        if (seats[passenger.fallback] > 0) {
+            seats[passenger.fallback]--;
+
+            results.push({
+                name: passenger.name,
+                trainNumber: passenger.trainNumber,
+                class: passenger.fallback,
+                status: "confirmed"
+            });
+
+            continue;
+        }
+
+        // waitlist
+        results.push({
+            name: passenger.name,
+            trainNumber: passenger.trainNumber,
+            class: passenger.preferred,
+            status: "waitlisted"
+        });
+    }
+
+    return results;
 }

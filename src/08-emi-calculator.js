@@ -41,6 +41,57 @@
  *   // First month interest = 500, EMI = 400 < 500, INFINITE LOOP!
  *   // => { months: -1, totalPaid: -1, totalInterest: -1 }
  */
+
+/**
+ * 📱 Rohit ka Phone EMI Calculator
+ */
 export function calculateEMI(principal, monthlyRate, emi) {
-  // Your code here
+    // 1. Validation: All params must be positive numbers
+    if (
+        typeof principal !== 'number' || principal <= 0 ||
+        typeof monthlyRate !== 'number' || monthlyRate < 0 ||
+        typeof emi !== 'number' || emi <= 0
+    ) {
+        return { months: -1, totalPaid: -1, totalInterest: -1 };
+    }
+
+    // 2. Infinite Loop Protection:
+    // If EMI is less than or equal to the first month's interest,
+    // the balance will never decrease.
+    if (emi <= principal * monthlyRate) {
+        return { months: -1, totalPaid: -1, totalInterest: -1 };
+    }
+
+    let remaining = principal;
+    let months = 0;
+    let totalInterest = 0;
+    let totalPaid = 0;
+
+    // 3. Calculation Loop
+    while (remaining > 0) {
+        months++;
+
+        // Calculate interest for this month
+        const interestThisMonth = remaining * monthlyRate;
+        totalInterest += interestThisMonth;
+
+        // Add interest to the balance
+        remaining += interestThisMonth;
+
+        // Last month logic: If remaining is less than EMI, pay only what's left
+        if (remaining < emi) {
+            totalPaid += remaining;
+            remaining = 0;
+        } else {
+            totalPaid += emi;
+            remaining -= emi;
+        }
+    }
+
+    // 4. Rounding to 2 decimal places to handle floating point issues
+    return {
+        months: months,
+        totalPaid: parseFloat(totalPaid.toFixed(2)),
+        totalInterest: parseFloat(totalInterest.toFixed(2))
+    };
 }
